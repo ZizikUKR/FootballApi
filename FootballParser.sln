@@ -5,6 +5,10 @@ VisualStudioVersion = 15.0.28307.271
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballParser", "FootballParser\FootballParser.csproj", "{894FC12D-2B49-43AA-8169-566899138D6A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballParser.Domain", "FootballParser.Domain\FootballParser.Domain.csproj", "{DA0727B0-27D3-472A-8B0F-5D1D742EFB0F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FootballParser.Infrasturcture", "FootballParser.Infrasturcture\FootballParser.Infrasturcture.csproj", "{82AD6511-0975-4F2D-9B2F-00031CB35C85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{894FC12D-2B49-43AA-8169-566899138D6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{894FC12D-2B49-43AA-8169-566899138D6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{894FC12D-2B49-43AA-8169-566899138D6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA0727B0-27D3-472A-8B0F-5D1D742EFB0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA0727B0-27D3-472A-8B0F-5D1D742EFB0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA0727B0-27D3-472A-8B0F-5D1D742EFB0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA0727B0-27D3-472A-8B0F-5D1D742EFB0F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{82AD6511-0975-4F2D-9B2F-00031CB35C85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{82AD6511-0975-4F2D-9B2F-00031CB35C85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{82AD6511-0975-4F2D-9B2F-00031CB35C85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{82AD6511-0975-4F2D-9B2F-00031CB35C85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

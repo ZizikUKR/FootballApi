@@ -2,6 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using FootballParser.Domain.Helpers;
+using FootballParser.Domain.Helpers.Interfaces;
+using FootballParser.Domain.Providers;
+using FootballParser.Domain.Providers.Interfaces;
+using FootballParser.Domain.Services;
+using FootballParser.Domain.Services.Interfaces;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -25,7 +31,13 @@ namespace FootballParser
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+          //  var connectionString = Configuration.GetConnectionString("DefaultConnection");
+           // FootballParser.Domain.Startup.Configure(connectionString, services);
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddTransient<IFootballService, FootballService>();
+            services.AddScoped<IFootballHelper, FootballHelper>();
+            services.AddScoped<IHtmlLoaderHelper, HtmlLoaderHelper>();
+            services.AddScoped<IFootballProvider, FootballProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
