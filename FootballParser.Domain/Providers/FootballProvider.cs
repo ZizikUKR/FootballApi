@@ -21,7 +21,7 @@ namespace FootballParser.Domain.Providers
         }
         public async Task<IEnumerable<TeamMatchStatistics>> GetMatches()
         {
-            List<TeamMatchStatistics> result = await ParsePage<TeamMatchStatistics>("https://www.sofascore.com/football/livescore");
+            List<TeamMatchStatistics> result = await ParsePage<TeamMatchStatistics>("https://www.sofascore.com/football");
             return result;
         }
 
