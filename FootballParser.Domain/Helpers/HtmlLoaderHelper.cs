@@ -17,6 +17,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using FootballParser.Domain.Entities;
+using OpenQA.Selenium.Support.UI;
 
 namespace FootballParser.Domain.Helpers
 {
@@ -24,28 +25,29 @@ namespace FootballParser.Domain.Helpers
     {
         readonly HttpClient client;
         private ChromeDriver _chromeDriver;
+        private WebDriverWait _webDriverWait;
 
         public HtmlLoaderHelper(/*IHabraSettings settings,*/)
-
-
-        
         {
-            client = new HttpClient();
+            // client = new HttpClient();
             //_url = $"{settings.BaseUrl}/{settings.Prefix}/";
             _chromeDriver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+            _chromeDriver.Manage().Window.Maximize();
+            _webDriverWait = new WebDriverWait(_chromeDriver,TimeSpan.FromMilliseconds(100));
         }
 
         public async Task<IHtmlDocument> GetPageSource(string url)
         {
-            var domParser = new HtmlParser();
-            Task.Run(() => _chromeDriver.Navigate().GoToUrl(url)).Wait();
+            //var domParser = new HtmlParser();
+            Task.Run(() => _chromeDriver.Navigate().GoToUrl(url)).Wait(100);
             var categories = _chromeDriver.FindElements(By.ClassName("js-sidebar-tournament")).ToList();
             var categoriesNum = categories.Count;
             for (int i = 2; i < categoriesNum; i++)
             {
                 try
                 {
-                    Task.Run(()=> categories[i].Click()).Wait();
+                    categories[i].Click();
+                    _webDriverWait.Until(ExpectedConditions.ElementToBeClickable(By.ClassName("js-standings-tables-part-panels")));
                     var teamsTab = _chromeDriver.FindElements(By.ClassName("js-standings-tables-part-panels")).ToList();
                     var activeTab = teamsTab.FirstOrDefault().FindElement(By.ClassName("active"));
                     var teams = activeTab.FindElements(By.ClassName("cell--standings")).ToList();
@@ -54,7 +56,7 @@ namespace FootballParser.Domain.Helpers
                     {
                         var click = teams[j].FindElement(By.ClassName("standings__team-name"));
                         var href = click.FindElement(By.ClassName("js-link"));
-                        Task.Run(() => href.Click()).Wait();// href.Click();
+                        Task.Run(() => href.Click()).Wait();
                         var team = new Team();
                         team.Name = _chromeDriver.FindElement(By.ClassName("page-title")).Text;
                         team.Url = _chromeDriver.Url;
@@ -71,48 +73,42 @@ namespace FootballParser.Domain.Helpers
                             team.Players.Add(newPlayer);
                         }
                         var matches = _chromeDriver.FindElements(By.ClassName("js-event-list-tournament-events")).ToList();
-                        foreach (var match in matches)
-                        {
-                            var matchLinks = match.FindElements(By.TagName("a"));
-                            foreach (var link in matchLinks)
-                            {
-                                var date = link.FindElement(By.ClassName("u-w64")).Text;
-                                Task.Run(() => link.Click()).Wait();
-                            }
-                        }
-                        _chromeDriver.Navigate().Back();
+                        await ParseTeamMatches(matches, team.Id);
+
+                        Task.Run(() => _chromeDriver.Navigate().Back()).Wait();
 
                         teamsTab = _chromeDriver.FindElements(By.ClassName("js-standings-tables-part-panels")).ToList();
                         activeTab = teamsTab.FirstOrDefault().FindElement(By.ClassName("active"));
                         teams = activeTab.FindElements(By.ClassName("cell--standings")).ToList();
                     }
                     //await GetTeam(teams);
-                    Task.Run(() =>_chromeDriver.Navigate().Back()).Wait();
+                    Task.Run(() => _chromeDriver.Navigate().Back()).Wait();
                     categories = _chromeDriver.FindElements(By.ClassName("js-sidebar-tournament")).ToList();
+                    return null;
                 }
                 catch (Exception ex)
                 {
-
+                    throw ex;
                 }
             }
-            try
-            {
-                var config = AngleSharp.Configuration.Default.WithDefaultLoader().WithJavaScript();
-
-                var context = BrowsingContext.New(config);
-                var document = await context.OpenAsync(url);
-                var document1 = await domParser.ParseDocumentAsync(document.ToHtml());
-                return document1;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            return null;
         }
 
-        private async Task ParseClub()
+        private async Task ParseTeamMatches(List<IWebElement> matches, Guid teamId)
         {
-
+            foreach (var item in matches)
+            {
+                var matchLinks = item.FindElements(By.TagName("a"));
+                foreach (var link in matchLinks)
+                {
+                    var date = link.FindElement(By.ClassName("u-w64")).Text;
+                    DateTime.TryParse(date, out DateTime matchTime);
+                    var match = new Match();
+                    match.TeamId = teamId;
+                    match.FootballDate = matchTime;
+                    Task.Run(() => link.Click()).Wait();
+                }
+            }
         }
 
         private async Task GetTeam(List<IWebElement> teams)
