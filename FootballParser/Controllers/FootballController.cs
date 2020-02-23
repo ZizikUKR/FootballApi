@@ -14,10 +14,17 @@ namespace FootballParser.Controllers
             _footballService = footballService;
         }
 
+        //[HttpGet]
+        //public async Task<IActionResult> Get()
+        //{
+        //    await _footballService.GetStatistic();
+        //    return Ok();
+        //}
+
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> GetLive()
         {
-            await _footballService.GetStatistic();
+            await _footballService.GetLive();
             return Ok();
         }
     }

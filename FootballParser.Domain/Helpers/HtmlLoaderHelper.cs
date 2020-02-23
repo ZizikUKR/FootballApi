@@ -4,7 +4,6 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using AngleSharp.Scripting.JavaScript;
 using AngleSharp;
 using AngleSharp.Dom;
 using AngleSharp.Html.Dom;
