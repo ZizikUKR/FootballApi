@@ -1,4 +1,5 @@
-﻿using FootballParser.Domain.Providers.Interfaces;
+﻿using FootballParser.Domain.Entities;
+using FootballParser.Domain.Providers.Interfaces;
 using FootballParser.Domain.Services.Interfaces;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -17,7 +18,7 @@ namespace FootballParser.Domain.Services
     {
         //private readonly IFootballProvider _footballProvider;
         private ChromeDriver _chromeDriver;
-        //private WebDriverWait _webDriverWait;
+        private WebDriverWait _webDriverWait;
         private readonly string _url;
 
         public FootballService()
@@ -38,7 +39,9 @@ namespace FootballParser.Domain.Services
         {
             try
             {
-                Task.Run(() => _chromeDriver.Navigate().GoToUrl(_url)).Wait(100);
+                var matchesToSend = new List<LiveMatch>();
+                Task.Run(() => _chromeDriver.Navigate().GoToUrl(_url)).Wait();
+
                 var league = _chromeDriver.FindElements(By.ClassName("js-event-list-tournament-events")).ToList();
                 for (int i = 0; i < league.Count; i++)
                 {
@@ -47,13 +50,14 @@ namespace FootballParser.Domain.Services
                         var matches = league[i].FindElements(By.CssSelector("a")).ToList();
                         for (int z = 0; z < matches.Count; z++)
                         {
-                            await GetMatch(matches[z]);
+                            await GetMatch(matches[z], matchesToSend);
                         }
                     }
                     catch(Exception ex)
                     {
 
-                    }                  
+                    }
+                    league = _chromeDriver.FindElements(By.ClassName("js-event-list-tournament-events")).ToList();
                 }
             }
             catch (Exception ex)
@@ -61,7 +65,7 @@ namespace FootballParser.Domain.Services
 
             }
         }
-        private async Task GetMatch(IWebElement element)
+        private async Task GetMatch(IWebElement element,List<LiveMatch> matches)
         {
             try
             {
@@ -79,6 +83,15 @@ namespace FootballParser.Domain.Services
                     Task.Run(() => statistic.Click()).Wait(100);
                     var statisticContainer = _chromeDriver.FindElement(By.ClassName("statistics-container"));
                     var allStatistic = statisticContainer.FindElements(By.ClassName("stat-group-event")).ToList();
+                    var match = new LiveMatch();
+                    foreach (var item in allStatistic)
+                    {
+                        var subStatistic = item.FindElements(By.ClassName("cell--incident"));
+                        foreach (var subItem in subStatistic)
+                        {
+
+                        }
+                    }
                 }
                 //}
                 // }
